@@ -1,0 +1,10 @@
+[Unit]
+Description=Prometheus Server
+Documentation=https://prometheus.io/docs/introduction/overview/
+
+[Service]
+#User={{ prometheus_user }}
+ExecStart={{ path_exec_prometheus }}{{ prometheus_folder }}/prometheus --config.file={{ path_conf_prometheus }}prometheus.yml
+
+[Install]
+WantedBy=multi-user.target
