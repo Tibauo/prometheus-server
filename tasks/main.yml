@@ -8,45 +8,79 @@
     state: stopped
   when: ansible_os_family == "RedHat"
 
+- name: create prometheus system group
+  become: yes
+  group:
+    name: prometheus
+    system: true
+    state: present
+
 - name: Create user Prometheus
   become: yes
   user:
     name: "{{ prometheus_user }}"
     createhome: "{{ create_home }}"
     state: present
+    system: yes
 
-- name: Create folder
+- name: Create prometheus directories
   become: yes
   file:
     path: "{{ item }}"
     state: directory
     owner: "{{ prometheus_user }}"
-    mode: 440
+    group: "{{ prometheus_user }}"
+    mode: 0755
   with_items:
     - "{{ path_exec_prometheus }}"
     - "{{ path_conf_prometheus }}"
- 
+
 - name: Get prometheus
   become: yes
   unarchive:
     src: "{{ download_prometheus }}"
-    dest: "{{ path_exec_prometheus }}"
+    dest: "/tmp/"
     owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
     remote_src: yes
+
+- name: cp prometheus and promtool binaries
+  become: yes
+  copy:
+    src: "/tmp/{{ prometheus_folder }}/{{ item }}"
+    dest: "{{ path_exec_prometheus }}"
+    mode: 0755
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    remote_src: yes
+  with_items:
+    - prometheus
+    - promtool
 
 - name: Create systemd
   become: yes
   template:
     src: "{{ item.file }}"
-    dest: "{{ item.dest }}" 
+    dest: "{{ item.dest }}"
     owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+    mode: 0755
+  with_items:
+    - {file: prometheus.yml.j2, dest: "{{ path_conf_prometheus }}prometheus.yml" }
+
+- name: Create systemd
+  become: yes
+  template:
+    src: "{{ item.file }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
   with_items:
     - {file: prometheus.service.j2, dest: /etc/systemd/system/prometheus.service}
-    - {file: prometheus.yml.j2, dest: "{{ path_conf_prometheus }}prometheus.yml" }    
 
 - name: Start service
   become: yes
-#  become_user: "{{ prometheus_user }}"
   systemd:
     name: prometheus
     state: started

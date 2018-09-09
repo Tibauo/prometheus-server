@@ -2,7 +2,7 @@
 # defaults file for prometheus
 prometheus_user: prometheus
 create_home: yes
-path_exec_prometheus: /opt/prometheus/
+path_exec_prometheus: /usr/local/bin/
 path_conf_prometheus: /etc/prometheus/
 data_storage_prometheus: /var/lib/prometheus/data
 
