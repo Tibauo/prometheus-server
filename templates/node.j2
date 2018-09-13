@@ -1,0 +1,4 @@
+- targets: [ "{{ item.host }}:{{ item.port }}" ]
+  labels:
+      # Vous pouvez ajouter ce que vous voulez pour taguer la machine
+      host: "{{ item.host }}"

@@ -4,8 +4,6 @@ After=network.target
 Documentation=https://prometheus.io/docs/introduction/overview/
 
 [Service]
-#User={{ prometheus_user }}
-#Group={{ prometheus_user }}
 Type=simple
 ExecStart={{ path_exec_prometheus }}prometheus --config.file={{ path_conf_prometheus }}prometheus.yml
 

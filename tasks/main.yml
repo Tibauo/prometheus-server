@@ -34,6 +34,7 @@
   with_items:
     - "{{ path_exec_prometheus }}"
     - "{{ path_conf_prometheus }}"
+    - "{{ path_conf_node }}"
 
 - name: Get prometheus
   become: yes
@@ -56,6 +57,15 @@
   with_items:
     - prometheus
     - promtool
+
+- name: Create conf node exporter
+  become: yes
+  template:
+    src: node.j2
+    dest: "{{ path_conf_node }}/{{ item.host }}.yml"
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
+  with_items: "{{ node_exporter }}"
 
 - name: Create systemd
   become: yes

@@ -10,3 +10,8 @@ prometheus_version: 2.3.2
 prometheus_folder: "prometheus-{{ prometheus_version }}.linux-amd64"
 prometheus_tar: "{{ prometheus_folder }}.tar.gz"
 download_prometheus: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/{{ prometheus_tar }}"
+
+path_conf_node: /etc/prometheus/nodes/
+
+node_exporter:
+  - {host: localhost, port: 9100}
